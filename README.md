@@ -1,0 +1,2 @@
+# vps-dev-env
+postinstall
