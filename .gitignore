@@ -1,0 +1,31 @@
+# Local environment
+.env
+*.env
+configs/vps.env
+
+# Secrets
+*.pem
+*.key
+id_rsa
+id_ed25519
+
+# Logs and caches
+*.log
+.cache/
+cache/
+logs/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+npm-debug.log*
+pnpm-debug.log*
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
