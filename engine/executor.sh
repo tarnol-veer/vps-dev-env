@@ -36,7 +36,7 @@ executor_apply_plan() {
   while IFS= read -r step; do
     [[ -z "${step}" ]] && continue
     executor_run_step "${step}"
-  done < <(manifest_install_plan)
+  done < <(planner_installers)
 
   log_info "apply complete"
 }

@@ -18,19 +18,25 @@ bash ./bin/ade doctor
 engine/
   ade-engine      # CLI entrypoint
   manifest.sh     # manifest reading helpers
-  planner.sh      # install plan display
+  planner.sh      # dependency-aware planning
   executor.sh     # apply implementation
   doctor.sh       # local checks
   logger.sh       # logging helpers
   utils.sh        # shared helpers
 ```
 
-## Current implementation
+## Component graph
 
-The engine intentionally uses a narrow YAML reader based on `awk` for the current manifest shape. It only reads the `install_plan` list and a few simple scalar values.
+The engine now prefers the `components` section in `ade.yaml`.
 
-This avoids adding a YAML parser dependency to the bootstrap path. Later, if ADE grows a richer manifest format, this can move to Python or a dedicated parser.
+Each component has an installer and optional dependencies. The planner performs a small topological resolution pass and produces an execution order.
+
+This is intentionally narrow. ADE is not trying to become a general-purpose YAML interpreter, because apparently we have suffered enough already.
+
+## Fallback
+
+If `components` is absent, the engine falls back to the legacy `install_plan` list.
 
 ## Design rule
 
-The manifest describes the desired ADE product. The engine executes it. Individual scripts remain responsible for idempotent installation of each component.
+The manifest describes the desired ADE product. The engine resolves and executes it. Individual scripts remain responsible for idempotent installation of each component.

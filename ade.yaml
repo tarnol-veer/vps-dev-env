@@ -1,10 +1,10 @@
 # ADE manifest
-# This file is the declarative source of truth for the reference Agent Development Environment.
+# Declarative source of truth for the reference Agent Development Environment.
 
 ade:
   name: ADE
   full_name: Agent Development Environment
-  version: 0.1.0
+  version: 0.2.0
   profile: ubuntu-vps
   description: Opinionated reproducible environment for AI-agent-based development.
 
@@ -53,13 +53,118 @@ agent_stack:
   planner:
     name: hermes
     required: true
-    installer: scripts/install-hermes.sh
+    component: hermes
     role: planning, orchestration, tool selection, result checking
   coder:
     name: opencode
     required: true
-    installer: scripts/install-opencode.sh
+    component: opencode
     role: code-oriented implementation work
+
+components:
+  base:
+    installer: scripts/install-base.sh
+    provides:
+      - apt packages
+      - system user
+      - directory layout
+
+  python:
+    installer: scripts/install-python.sh
+    depends_on:
+      - base
+    provides:
+      - uv
+      - python
+
+  node:
+    installer: scripts/install-node.sh
+    depends_on:
+      - base
+    provides:
+      - node
+      - npm
+      - pnpm
+
+  github:
+    installer: scripts/install-github.sh
+    depends_on:
+      - base
+    provides:
+      - gh
+
+  git_config:
+    installer: scripts/setup-git.sh
+    depends_on:
+      - base
+      - github
+    provides:
+      - git global config
+
+  ssh:
+    installer: scripts/setup-ssh.sh
+    depends_on:
+      - base
+    provides:
+      - ssh directory
+      - github ssh host config
+
+  hermes:
+    installer: scripts/install-hermes.sh
+    depends_on:
+      - base
+      - python
+      - github
+    required: true
+    provides:
+      - planner
+      - orchestrator
+
+  opencode:
+    installer: scripts/install-opencode.sh
+    depends_on:
+      - base
+      - node
+      - github
+    required: true
+    provides:
+      - coding agent
+
+  repos:
+    installer: scripts/clone-repos.sh
+    depends_on:
+      - git_config
+      - ssh
+    provides:
+      - project-memory placeholder
+      - project-core placeholder
+      - playground placeholder
+
+  healthcheck:
+    installer: scripts/healthcheck.sh
+    depends_on:
+      - base
+      - python
+      - node
+      - github
+      - hermes
+      - opencode
+      - repos
+    provides:
+      - environment validation
+
+# Kept as a compatibility fallback for simple parsers.
+install_plan:
+  - scripts/install-base.sh
+  - scripts/install-python.sh
+  - scripts/install-node.sh
+  - scripts/install-github.sh
+  - scripts/setup-git.sh
+  - scripts/setup-ssh.sh
+  - scripts/install-hermes.sh
+  - scripts/install-opencode.sh
+  - scripts/clone-repos.sh
+  - scripts/healthcheck.sh
 
 repositories:
   memory:
@@ -74,18 +179,6 @@ repositories:
     env: PLAYGROUND_REPO
     target: playground
     required: false
-
-install_plan:
-  - scripts/install-base.sh
-  - scripts/install-python.sh
-  - scripts/install-node.sh
-  - scripts/install-github.sh
-  - scripts/setup-git.sh
-  - scripts/setup-ssh.sh
-  - scripts/install-hermes.sh
-  - scripts/install-opencode.sh
-  - scripts/clone-repos.sh
-  - scripts/healthcheck.sh
 
 services:
   healthcheck:

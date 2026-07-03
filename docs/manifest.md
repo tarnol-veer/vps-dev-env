@@ -6,7 +6,7 @@ It describes what the environment is supposed to contain. Shell scripts remain c
 
 ## Current purpose
 
-In v0.1, the manifest defines:
+In v0.2, the manifest defines:
 
 - Ubuntu 24.04 target
 - Python managed by uv
@@ -16,20 +16,36 @@ In v0.1, the manifest defines:
 - OpenCode as the required coding agent
 - optional project repositories
 - healthcheck service template
-- install plan consumed by ADE Engine
+- component graph consumed by ADE Engine
 
-## Install plan
+## Components
 
-The `install_plan` section lists the scripts run by ADE Engine.
+The `components` section is now the preferred execution model.
+
+Each component may define:
+
+```yaml
+components:
+  python:
+    installer: scripts/install-python.sh
+    depends_on:
+      - base
+    provides:
+      - uv
+      - python
+```
+
+ADE Engine reads the component graph, resolves dependencies, and executes installers in dependency order.
+
+## Compatibility fallback
+
+`install_plan` is still present as a simple fallback for older or simpler tooling.
 
 ```yaml
 install_plan:
   - scripts/install-base.sh
   - scripts/install-python.sh
-  - scripts/install-node.sh
 ```
-
-The engine currently supports this simple list shape. That is deliberate. The bootstrap path should stay boring and reliable, because excitement belongs in demos and outages.
 
 ## Design rule
 

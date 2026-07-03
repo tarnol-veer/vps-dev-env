@@ -36,7 +36,7 @@ The reference environment is declared in:
 ade.yaml
 ```
 
-ADE Engine executes the manifest:
+ADE Engine resolves the component graph and executes the manifest:
 
 ```bash
 bash ./bin/ade plan
@@ -44,11 +44,27 @@ sudo bash ./bin/ade apply
 bash ./bin/ade doctor
 ```
 
-`bootstrap.sh` is now a thin wrapper around:
+`bootstrap.sh` is a thin wrapper around:
 
 ```bash
 ./engine/ade-engine apply ./ade.yaml
 ```
+
+## Component model
+
+ADE components declare installers and dependencies:
+
+```yaml
+components:
+  hermes:
+    installer: scripts/install-hermes.sh
+    depends_on:
+      - base
+      - python
+      - github
+```
+
+The engine resolves this graph before running installers.
 
 ## Architecture
 
