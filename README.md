@@ -1,8 +1,10 @@
-# vps-dev-env
+# ADE
 
-Reproducible VPS development environment for an agent-based engineering stack.
+**Agent Development Environment**
 
-This repository is intended to be a public, reusable **Agent Development Environment** rather than a private pile of shell scraps. Its goal is to make a fresh Ubuntu VPS usable for cloud-model-based agent development with minimal manual setup.
+ADE is an opinionated, reproducible VPS development environment for AI-agent-based engineering.
+
+It is not just a pile of personal shell scripts wearing a trench coat. It is intended to become a ready-to-use reference environment for agentic development on a fresh Ubuntu server.
 
 ## Goals
 
@@ -11,9 +13,30 @@ This repository is intended to be a public, reusable **Agent Development Environ
 - avoid manual snowflake configuration;
 - avoid local LLMs by default;
 - use cloud model providers;
-- use Hermes as a planner/orchestrator;
-- use OpenCode as a code agent;
+- use Hermes as the required planner/orchestrator;
+- use OpenCode as the required coding agent;
 - use GitHub as the source of truth for code and project memory.
+
+## Reference stack
+
+- Ubuntu Server 24.04
+- Python + uv
+- Node.js LTS + pnpm
+- Git + GitHub CLI
+- MCP-ready configuration layout
+- Hermes
+- OpenCode
+- OpenAI / OpenRouter or compatible cloud model providers
+
+## Manifest
+
+The reference environment is declared in:
+
+```text
+ade.yaml
+```
+
+`bootstrap.sh` follows this stack and install plan.
 
 ## Architecture
 
@@ -42,7 +65,7 @@ Git / GitHub / MCP
 
 Hermes is responsible for task understanding, planning, tool selection, invoking OpenCode, and checking results.
 
-OpenCode is responsible only for code-oriented work.
+OpenCode is responsible for code-oriented implementation work.
 
 ## Minimum VPS
 
@@ -50,81 +73,6 @@ OpenCode is responsible only for code-oriented work.
 - 1 CPU
 - 3 GB RAM
 - 20 GB SSD
-
-## Installed layers
-
-### System
-
-- openssh-server
-- git, git-lfs
-- curl, wget
-- jq
-- sqlite3
-- tree
-- ripgrep
-- fd-find
-- tmux
-- htop, btop
-- build-essential
-- cmake
-
-### Python
-
-- uv
-- Python 3.13 where available
-
-### Node
-
-- Node.js LTS
-- npm
-- pnpm
-
-### GitHub
-
-- GitHub CLI (`gh`)
-- SSH setup helpers
-- Git config helpers
-
-### Agent layer
-
-- Hermes
-- OpenCode
-
-Both are intentionally represented as install hooks until their exact upstream installation method is finalized.
-
-## Directory layout on VPS
-
-```text
-~/dev/
-  repos/
-    project-memory/
-    project-core/
-    playground/
-  tools/
-  cache/
-  logs/
-
-~/.config/
-  vos/
-  agent-dev-env/
-```
-
-## Repository layout
-
-```text
-vps-dev-env/
-  README.md
-  bootstrap.sh
-  install.sh
-  Makefile
-  .gitignore
-  docs/
-  configs/
-  scripts/
-  packages/
-  systemd/
-  templates/
-```
 
 ## Usage
 
@@ -136,10 +84,16 @@ cd vps-dev-env
 sudo bash ./bootstrap.sh
 ```
 
-Or use the installer entrypoint after reviewing it:
+Inspect the install plan:
 
 ```bash
-bash ./install.sh
+bash ./scripts/ade-plan.sh
+```
+
+Run healthcheck:
+
+```bash
+bash ./scripts/healthcheck.sh
 ```
 
 ## Configuration
@@ -154,13 +108,17 @@ cp configs/vps.env.example configs/vps.env
 
 ## Principles
 
+### Opinionated stack
+
+ADE ships a predefined stack instead of pretending to support every possible tool. The supported baseline is Hermes + OpenCode.
+
 ### No secrets
 
 Only `.env.example` files belong in the repository. API keys, tokens, SSH private keys, and personal configuration stay local.
 
 ### Idempotency
 
-Running the bootstrap repeatedly should not break the machine. Every script should be safe to rerun.
+Running the bootstrap repeatedly should not break the machine.
 
 ```bash
 sudo bash ./bootstrap.sh
@@ -168,7 +126,7 @@ sudo bash ./bootstrap.sh
 
 ### Repository as source of truth
 
-If the environment changes, the change should be reflected here. No "installed manually and forgotten" archaeology, humanity has suffered enough.
+If the environment changes, the change should be reflected here.
 
 ### Minimal dependencies
 
@@ -176,35 +134,4 @@ Do not add Docker, PostgreSQL, Redis, Neo4j, Qdrant, or local LLMs until they ar
 
 ## Roadmap
 
-### v0.1
-
-- Bootstrap VPS
-- Python
-- Node
-- GitHub CLI
-- Hermes hook
-- OpenCode hook
-- Directory layout
-
-### v0.2
-
-- MCP
-- project-memory placeholder
-- project-core placeholder
-- automatic repository cloning
-
-### v0.3
-
-- Telegram gateway placeholder
-- memory update workflows
-- basic agent workflows
-
-### v0.4
-
-- Cherry Studio configuration notes
-- OpenAI/OpenRouter setup notes
-- multiple configuration profiles
-
-### v1.0
-
-A reproducible engineering environment for an agent-based VOS stack, deployable on a fresh Ubuntu Server with almost one command.
+See `docs/roadmap.md`.

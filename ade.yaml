@@ -1,0 +1,102 @@
+# ADE manifest
+# This file is the declarative source of truth for the reference Agent Development Environment.
+
+ade:
+  name: ADE
+  full_name: Agent Development Environment
+  version: 0.1.0
+  profile: ubuntu-vps
+  description: Opinionated reproducible environment for AI-agent-based development.
+
+platform:
+  os: ubuntu
+  release: "24.04"
+  minimum:
+    cpu: 1
+    memory_gb: 3
+    disk_gb: 20
+
+users:
+  agent_user: vos
+
+paths:
+  dev_root: "~/dev"
+  repos_dir: "~/dev/repos"
+  tools_dir: "~/dev/tools"
+  cache_dir: "~/dev/cache"
+  logs_dir: "~/dev/logs"
+  config_dirs:
+    - "~/.config/ade"
+    - "~/.config/vos"
+
+packages:
+  apt: packages/apt.txt
+  python: packages/python.txt
+  npm: packages/npm.txt
+
+runtime:
+  python:
+    manager: uv
+    preferred_version: "3.13"
+    fallback_version: "3.12"
+  node:
+    channel: lts
+    package_manager: pnpm
+
+source_control:
+  provider: github
+  cli: gh
+  git:
+    config_template: configs/gitconfig.example
+
+agent_stack:
+  planner:
+    name: hermes
+    required: true
+    installer: scripts/install-hermes.sh
+    role: planning, orchestration, tool selection, result checking
+  coder:
+    name: opencode
+    required: true
+    installer: scripts/install-opencode.sh
+    role: code-oriented implementation work
+
+repositories:
+  memory:
+    env: MEMORY_REPO
+    target: project-memory
+    required: false
+  core:
+    env: CORE_REPO
+    target: project-core
+    required: false
+  playground:
+    env: PLAYGROUND_REPO
+    target: playground
+    required: false
+
+install_plan:
+  - scripts/install-base.sh
+  - scripts/install-python.sh
+  - scripts/install-node.sh
+  - scripts/install-github.sh
+  - scripts/setup-git.sh
+  - scripts/setup-ssh.sh
+  - scripts/install-hermes.sh
+  - scripts/install-opencode.sh
+  - scripts/clone-repos.sh
+  - scripts/healthcheck.sh
+
+services:
+  healthcheck:
+    service: systemd/healthcheck.service
+    timer: systemd/healthcheck.timer
+    enabled_by_default: false
+
+principles:
+  - no secrets in repository
+  - idempotent installers
+  - repository as source of truth
+  - cloud models by default
+  - no local LLMs by default
+  - Hermes and OpenCode are required in the reference stack
