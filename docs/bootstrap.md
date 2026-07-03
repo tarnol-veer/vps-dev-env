@@ -2,22 +2,19 @@
 
 ADE is bootstrapped through `bootstrap.sh`.
 
-The bootstrap process is now anchored by `ade.yaml`, which defines the reference stack and install plan.
+`bootstrap.sh` is intentionally thin. It delegates execution to ADE Engine:
+
+```bash
+./engine/ade-engine apply ./ade.yaml
+```
 
 ## Basic flow
 
 1. Load and require `ade.yaml`.
-2. Load `configs/vps.env` if it exists.
-3. Install base Ubuntu packages.
-4. Install Python and uv.
-5. Install Node.js LTS and pnpm.
-6. Install GitHub CLI.
-7. Configure Git.
-8. Prepare SSH.
-9. Install Hermes integration hook.
-10. Install OpenCode integration hook.
-11. Clone configured repositories.
-12. Run healthcheck.
+2. Read `install_plan` from the manifest.
+3. Load `configs/vps.env` if it exists.
+4. Execute each installer in order.
+5. Run healthcheck as the final install step.
 
 ## Command
 
@@ -28,7 +25,13 @@ sudo bash ./bootstrap.sh
 ## Inspect the plan
 
 ```bash
-bash ./scripts/ade-plan.sh
+bash ./bin/ade plan
 ```
 
-The script is designed to be rerunnable. If a component already exists, the installer should reuse or update it rather than breaking the machine for dramatic effect.
+## Run doctor
+
+```bash
+bash ./bin/ade doctor
+```
+
+The bootstrap is designed to be rerunnable. If a component already exists, its installer should reuse or update it rather than breaking the machine for dramatic effect.

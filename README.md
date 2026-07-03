@@ -4,7 +4,7 @@
 
 ADE is an opinionated, reproducible VPS development environment for AI-agent-based engineering.
 
-It is not just a pile of personal shell scripts wearing a trench coat. It is intended to become a ready-to-use reference environment for agentic development on a fresh Ubuntu server.
+It is intended to become a ready-to-use reference environment for agentic development on a fresh Ubuntu server.
 
 ## Goals
 
@@ -28,7 +28,7 @@ It is not just a pile of personal shell scripts wearing a trench coat. It is int
 - OpenCode
 - OpenAI / OpenRouter or compatible cloud model providers
 
-## Manifest
+## Manifest and engine
 
 The reference environment is declared in:
 
@@ -36,7 +36,19 @@ The reference environment is declared in:
 ade.yaml
 ```
 
-`bootstrap.sh` follows this stack and install plan.
+ADE Engine executes the manifest:
+
+```bash
+bash ./bin/ade plan
+sudo bash ./bin/ade apply
+bash ./bin/ade doctor
+```
+
+`bootstrap.sh` is now a thin wrapper around:
+
+```bash
+./engine/ade-engine apply ./ade.yaml
+```
 
 ## Architecture
 
@@ -87,7 +99,13 @@ sudo bash ./bootstrap.sh
 Inspect the install plan:
 
 ```bash
-bash ./scripts/ade-plan.sh
+bash ./bin/ade plan
+```
+
+Run doctor:
+
+```bash
+bash ./bin/ade doctor
 ```
 
 Run healthcheck:

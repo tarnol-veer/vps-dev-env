@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ENGINE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ADE_ROOT="$(cd "${ENGINE_DIR}/.." && pwd)"
+export ENGINE_DIR ADE_ROOT
+
+# shellcheck source=engine/logger.sh
+source "${ENGINE_DIR}/logger.sh"
+# shellcheck source=engine/utils.sh
+source "${ENGINE_DIR}/utils.sh"
+# shellcheck source=engine/manifest.sh
+source "${ENGINE_DIR}/manifest.sh"
+# shellcheck source=engine/planner.sh
+source "${ENGINE_DIR}/planner.sh"
+# shellcheck source=engine/executor.sh
+source "${ENGINE_DIR}/executor.sh"
+# shellcheck source=engine/doctor.sh
+source "${ENGINE_DIR}/doctor.sh"
+
+usage() {
+  cat <<'EOF'
+ADE Engine
+
+Usage:
+  ade plan [manifest]
+  ade apply [manifest]
+  ade doctor [manifest]
+  ade help
+
+Commands:
+  plan     Show the install plan from ade.yaml
+  apply    Execute the install plan from ade.yaml
+  doctor   Check the current machine state
+  help     Show this help
+EOF
+}
+
+cmd="${1:-help}"
+shift || true
+
+manifest_path="${1:-${ADE_ROOT}/ade.yaml}"
+manifest_set_path "${manifest_path}"
+
+case "${cmd}" in
+  plan)
+    planner_print_plan
+    ;;
+  apply)
+    executor_apply_plan
+    ;;
+  doctor)
+    doctor_run
+    ;;
+  help|-h|--help)
+    usage
+    ;;
+  *)
+    log_error "Unknown command: ${cmd}"
+    usage
+    exit 2
+    ;;
+esac
