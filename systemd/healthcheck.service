@@ -1,0 +1,9 @@
+[Unit]
+Description=ADE healthcheck
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/ade
+ExecStart=/bin/bash /opt/ade/scripts/healthcheck.sh

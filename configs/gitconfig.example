@@ -1,0 +1,12 @@
+[user]
+	name = ADE User
+	email = ade@example.local
+
+[init]
+	defaultBranch = main
+
+[pull]
+	rebase = false
+
+[core]
+	editor = nano
