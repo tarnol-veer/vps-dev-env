@@ -41,7 +41,7 @@ manifest_component_installer() {
     }
     in_components && in_target && /^    installer:/ {
       sub(/^    installer:[[:space:]]*/, "")
-      gsub(/\"/, "")
+      gsub("\"", "")
       print
       exit
     }
@@ -82,6 +82,6 @@ manifest_install_plan() {
 manifest_value() {
   local key="$1"
   awk -v key="${key}" '
-    $1 == key ":" { sub(/^[^:]+:[[:space:]]*/, ""); gsub(/\"/, ""); print; exit }
+    $1 == key ":" { sub(/^[^:]+:[[:space:]]*/, ""); gsub("\"", ""); print; exit }
   ' "${ADE_MANIFEST}"
 }
