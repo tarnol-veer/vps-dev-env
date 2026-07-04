@@ -12,11 +12,22 @@ sudo bash ./bin/ade apply
 bash ./bin/ade doctor
 ```
 
+## User resolution
+
+ADE resolves its target user in this order:
+
+1. explicit `AGENT_USER` from `configs/vps.env`;
+2. `SUDO_USER` when run through sudo;
+3. current user.
+
+This makes the default install user-first. A dedicated service user is still possible, but it is an explicit choice instead of a surprise guest wrecking file permissions.
+
 ## Structure
 
 ```text
 engine/
   ade-engine      # CLI entrypoint
+  user.sh         # target user resolution
   manifest.sh     # manifest reading helpers
   planner.sh      # dependency-aware planning
   executor.sh     # apply implementation
@@ -27,11 +38,9 @@ engine/
 
 ## Component graph
 
-The engine now prefers the `components` section in `ade.yaml`.
+The engine prefers the `components` section in `ade.yaml`.
 
 Each component has an installer and optional dependencies. The planner performs a small topological resolution pass and produces an execution order.
-
-This is intentionally narrow. ADE is not trying to become a general-purpose YAML interpreter, because apparently we have suffered enough already.
 
 ## Fallback
 

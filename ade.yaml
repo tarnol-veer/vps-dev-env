@@ -4,7 +4,7 @@
 ade:
   name: ADE
   full_name: Agent Development Environment
-  version: 0.2.0
+  version: 0.2.1
   profile: ubuntu-vps
   description: Opinionated reproducible environment for AI-agent-based development.
 
@@ -17,7 +17,12 @@ platform:
     disk_gb: 20
 
 users:
-  agent_user: vos
+  mode: current
+  agent_user_env: AGENT_USER
+  default_resolution:
+    - explicit AGENT_USER
+    - sudo caller
+    - current user
 
 paths:
   dev_root: "~/dev"
@@ -66,7 +71,7 @@ components:
     installer: scripts/install-base.sh
     provides:
       - apt packages
-      - system user
+      - selected user
       - directory layout
 
   python:
@@ -153,7 +158,6 @@ components:
     provides:
       - environment validation
 
-# Kept as a compatibility fallback for simple parsers.
 install_plan:
   - scripts/install-base.sh
   - scripts/install-python.sh

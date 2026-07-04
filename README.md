@@ -28,6 +28,28 @@ It is intended to become a ready-to-use reference environment for agentic develo
 - OpenCode
 - OpenAI / OpenRouter or compatible cloud model providers
 
+## User model
+
+By default ADE installs into the user that launched it with `sudo`.
+
+For example, if you run:
+
+```bash
+sudo bash ./bootstrap.sh
+```
+
+from user `memery`, ADE uses:
+
+```text
+/home/memery/dev
+```
+
+A dedicated user such as `vos` is still possible, but only when explicitly configured in `configs/vps.env`:
+
+```env
+AGENT_USER=vos
+```
+
 ## Manifest and engine
 
 The reference environment is declared in:
@@ -65,35 +87,6 @@ components:
 ```
 
 The engine resolves this graph before running installers.
-
-## Architecture
-
-```text
-User
-  |
-  |-- Cherry Studio
-  |-- VS Code
-  |-- SSH
-  |
-  v
-Ubuntu VPS
-  |
-  v
-Hermes (planner / orchestrator)
-  |
-  v
-OpenCode (coder)
-  |
-  v
-Git / GitHub / MCP
-  |
-  |-- project-memory   # placeholder repository
-  |-- project-core     # placeholder repository
-```
-
-Hermes is responsible for task understanding, planning, tool selection, invoking OpenCode, and checking results.
-
-OpenCode is responsible for code-oriented implementation work.
 
 ## Minimum VPS
 

@@ -8,12 +8,30 @@ ADE is bootstrapped through `bootstrap.sh`.
 ./engine/ade-engine apply ./ade.yaml
 ```
 
+## User model
+
+By default ADE installs into the user that invoked `sudo`.
+
+For example:
+
+```bash
+sudo bash ./bootstrap.sh
+```
+
+run by user `memery` installs ADE paths under:
+
+```text
+/home/memery/dev
+```
+
+To force a dedicated user, set `AGENT_USER` in `configs/vps.env`.
+
 ## Basic flow
 
 1. Load and require `ade.yaml`.
-2. Read `install_plan` from the manifest.
-3. Load `configs/vps.env` if it exists.
-4. Execute each installer in order.
+2. Resolve target user and paths.
+3. Read the component graph from the manifest.
+4. Execute each installer in dependency order.
 5. Run healthcheck as the final install step.
 
 ## Command

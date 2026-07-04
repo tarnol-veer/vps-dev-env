@@ -10,12 +10,7 @@ executor_load_env() {
     log_warn "configs/vps.env not found; using defaults"
   fi
 
-  export AGENT_USER="${AGENT_USER:-vos}"
-  export DEV_ROOT="${DEV_ROOT:-/home/${AGENT_USER}/dev}"
-  export REPOS_DIR="${REPOS_DIR:-${DEV_ROOT}/repos}"
-  export TOOLS_DIR="${TOOLS_DIR:-${DEV_ROOT}/tools}"
-  export CACHE_DIR="${CACHE_DIR:-${DEV_ROOT}/cache}"
-  export LOGS_DIR="${LOGS_DIR:-${DEV_ROOT}/logs}"
+  ade_export_user_paths
   export ADE_ROOT ADE_MANIFEST
 }
 
@@ -31,6 +26,8 @@ executor_apply_plan() {
   require_root
   executor_load_env
   log_info "applying manifest: $(manifest_path)"
+  log_info "target user: ${AGENT_USER}"
+  log_info "dev root: ${DEV_ROOT}"
 
   local step
   while IFS= read -r step; do

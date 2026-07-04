@@ -9,6 +9,8 @@ export ENGINE_DIR ADE_ROOT
 source "${ENGINE_DIR}/logger.sh"
 # shellcheck source=engine/utils.sh
 source "${ENGINE_DIR}/utils.sh"
+# shellcheck source=engine/user.sh
+source "${ENGINE_DIR}/user.sh"
 # shellcheck source=engine/manifest.sh
 source "${ENGINE_DIR}/manifest.sh"
 # shellcheck source=engine/planner.sh

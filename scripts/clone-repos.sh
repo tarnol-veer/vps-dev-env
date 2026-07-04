@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-AGENT_USER="${AGENT_USER:-vos}"
-REPOS_DIR="${REPOS_DIR:-/home/${AGENT_USER}/dev/repos}"
+AGENT_USER="${AGENT_USER:-${SUDO_USER:-$(id -un)}}"
+if [[ "${AGENT_USER}" == "root" && -n "${SUDO_USER:-}" && "${SUDO_USER}" != "root" ]]; then
+  AGENT_USER="${SUDO_USER}"
+fi
+AGENT_HOME="$(getent passwd "${AGENT_USER}" | cut -d: -f6)"
+REPOS_DIR="${REPOS_DIR:-${AGENT_HOME}/dev/repos}"
 MEMORY_REPO="${MEMORY_REPO:-}"
 CORE_REPO="${CORE_REPO:-}"
 PLAYGROUND_REPO="${PLAYGROUND_REPO:-}"
 
 run_as_agent() {
-  sudo -u "${AGENT_USER}" -H "$@"
+  sudo -u "${AGENT_USER}" -H bash -lc "cd '${AGENT_HOME}' && \"\$@\"" bash "$@"
 }
 
 clone_or_skip() {

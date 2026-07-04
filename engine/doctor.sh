@@ -34,6 +34,14 @@ doctor_run() {
   local failures=0
   log_info "doctor: $(manifest_path)"
 
+  if [[ -f "${ADE_ROOT}/configs/vps.env" ]]; then
+    # shellcheck disable=SC1090
+    source "${ADE_ROOT}/configs/vps.env"
+  fi
+  ade_export_user_paths
+  log_info "target user: ${AGENT_USER}"
+  log_info "dev root: ${DEV_ROOT}"
+
   doctor_check_file "${ADE_ROOT}/ade.yaml" || failures=$((failures + 1))
   doctor_check_file "${ADE_ROOT}/bootstrap.sh" || failures=$((failures + 1))
 
@@ -43,9 +51,7 @@ doctor_run() {
   doctor_check_cmd curl || failures=$((failures + 1))
   doctor_check_cmd awk || failures=$((failures + 1))
 
-  if [[ -n "${AGENT_USER:-}" ]]; then
-    doctor_check_dir "${DEV_ROOT:-/home/${AGENT_USER}/dev}" || true
-  fi
+  doctor_check_dir "${AGENT_HOME}" || failures=$((failures + 1))
 
   if [[ "${failures}" -gt 0 ]]; then
     log_error "doctor found ${failures} issue(s)"

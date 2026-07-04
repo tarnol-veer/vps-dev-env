@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-AGENT_USER="${AGENT_USER:-vos}"
-TOOLS_DIR="${TOOLS_DIR:-/home/${AGENT_USER}/dev/tools}"
+AGENT_USER="${AGENT_USER:-${SUDO_USER:-$(id -un)}}"
+if [[ "${AGENT_USER}" == "root" && -n "${SUDO_USER:-}" && "${SUDO_USER}" != "root" ]]; then
+  AGENT_USER="${SUDO_USER}"
+fi
+AGENT_HOME="$(getent passwd "${AGENT_USER}" | cut -d: -f6)"
+TOOLS_DIR="${TOOLS_DIR:-${AGENT_HOME}/dev/tools}"
 
 install -d -o "${AGENT_USER}" -g "${AGENT_USER}" "${TOOLS_DIR}/hermes"
 

@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-AGENT_USER="${AGENT_USER:-vos}"
+AGENT_USER="${AGENT_USER:-${SUDO_USER:-$(id -un)}}"
+if [[ "${AGENT_USER}" == "root" && -n "${SUDO_USER:-}" && "${SUDO_USER}" != "root" ]]; then
+  AGENT_USER="${SUDO_USER}"
+fi
 GIT_NAME="${GIT_NAME:-ADE User}"
 GIT_EMAIL="${GIT_EMAIL:-ade@example.local}"
 AGENT_HOME="$(getent passwd "${AGENT_USER}" | cut -d: -f6)"

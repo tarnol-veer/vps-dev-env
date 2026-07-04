@@ -6,9 +6,10 @@ It describes what the environment is supposed to contain. Shell scripts remain c
 
 ## Current purpose
 
-In v0.2, the manifest defines:
+In v0.2.1, the manifest defines:
 
 - Ubuntu 24.04 target
+- current-user-first installation model
 - Python managed by uv
 - Node.js LTS and pnpm
 - Git and GitHub CLI
@@ -18,9 +19,25 @@ In v0.2, the manifest defines:
 - healthcheck service template
 - component graph consumed by ADE Engine
 
+## User model
+
+The `users` section documents the target user resolution model:
+
+```yaml
+users:
+  mode: current
+  agent_user_env: AGENT_USER
+```
+
+Runtime behavior is:
+
+1. use explicit `AGENT_USER` when configured;
+2. otherwise use `SUDO_USER`;
+3. otherwise use the current user.
+
 ## Components
 
-The `components` section is now the preferred execution model.
+The `components` section is the preferred execution model.
 
 Each component may define:
 
@@ -40,12 +57,6 @@ ADE Engine reads the component graph, resolves dependencies, and executes instal
 ## Compatibility fallback
 
 `install_plan` is still present as a simple fallback for older or simpler tooling.
-
-```yaml
-install_plan:
-  - scripts/install-base.sh
-  - scripts/install-python.sh
-```
 
 ## Design rule
 
